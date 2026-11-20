@@ -121,8 +121,8 @@
 
     <button class="logout-btn" id="logoutBtn" onclick="logout()">🔒 تسجيل الخروج من الجهاز</button>
 
-    <div class="footer">
-        🛡️ جروب عملاء البنوك المصرية<br>Developed by Tarek Metwally
+    <div class="footer" id="noteFooter" style="color: #ff4d4d;">
+        ملحوظة: الكود خاص بموبايلك
     </div>
 </div>
 
@@ -153,6 +153,9 @@
             ? `نسبة العائد السنوي: <b id='resAnnualYield'>${currentYieldVal}</b>%`
             : `Net Annual Yield: <b id='resAnnualYield'>${currentYieldVal}</b>%`;
         document.getElementById('logoutBtn').innerText = isAr ? "🔒 تسجيل الخروج من الجهاز" : "🔒 Logout from Device";
+        document.getElementById('noteFooter').innerText = isAr
+            ? "ملحوظة: الكود خاص بموبايلك"
+            : "Note: The code is locked to your mobile device";
         setMarket(currentType); 
     }
 
@@ -240,8 +243,6 @@
             const data = await response.json();
             const msg = (data && data.message) ? data.message.toString() : "";
 
-            // في Code.gs الكود السليم غير المستخدم بيرجع { ok: false, message: 'هذا الكود تم استخدامه من قبل' }
-            // لكن لو بقى "موقوف" أو غير موجود في الشيت بيرجع ok: false برسالة مختلفة عن "تم استخدامه من قبل"
             if (data && data.ok === false && !msg.includes("تم استخدامه من قبل")) {
                 forceLogout(msg || "هذا الكود موقوف");
             }
