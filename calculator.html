@@ -80,8 +80,8 @@
         .card span { display: block; font-size: 9px; margin-bottom: 2px; color: #cbd5e1; }
         .card h4 { margin: 0; color: #ffd700; font-size: 12px; }
         .total-box { border: 2px solid #ff4d4d; padding: 6px; border-radius: 6px; text-align: center; }
+        .device-note { border: 1px solid #ff4d4d; color: #ff4d4d; border-radius: 6px; padding: 5px; font-size: 11px; font-weight: bold; text-align: center; width: 100%; }
         .footer { text-align: center; font-size: 10px; color: #ffd700; border-top: 1px solid #ffd700; padding-top: 5px; }
-        .logout-btn { background: transparent; border: 1px solid #ff4d4d; color: #ff4d4d; border-radius: 6px; padding: 5px; font-size: 11px; font-weight: bold; cursor: pointer; width: 100%; }
     </style>
 </head>
 <body>
@@ -119,13 +119,10 @@
         <span id="lblAnnualYield" style="font-size:10px; margin-top:2px; display:block; color:#ffd700">نسبة العائد السنوي: <b id="resAnnualYield">0</b>%</span>
     </div>
 
-    <button class="logout-btn" id="logoutBtn" onclick="logout()">🔒 تسجيل الخروج من الجهاز</button>
+    <div class="device-note" id="noteDevice">ملحوظة: الكود خاص بموبايلك</div>
 
     <div class="footer">
         🛡️ جروب عملاء البنوك المصرية<br>Developed by Tarek Metwally
-        <div id="noteFooter" style="color: #ff4d4d; margin-top: 4px;">
-            ملحوظة: الكود خاص بموبايلك
-        </div>
     </div>
 </div>
 
@@ -155,8 +152,7 @@
         document.getElementById('lblAnnualYield').innerHTML = isAr
             ? `نسبة العائد السنوي: <b id='resAnnualYield'>${currentYieldVal}</b>%`
             : `Net Annual Yield: <b id='resAnnualYield'>${currentYieldVal}</b>%`;
-        document.getElementById('logoutBtn').innerText = isAr ? "🔒 تسجيل الخروج من الجهاز" : "🔒 Logout from Device";
-        document.getElementById('noteFooter').innerText = isAr
+        document.getElementById('noteDevice').innerText = isAr
             ? "ملحوظة: الكود خاص بموبايلك"
             : "Note: The code is locked to your mobile device";
         setMarket(currentType); 
@@ -218,12 +214,6 @@
         localStorage.removeItem("is_logged_in");
         localStorage.removeItem("activated_code");
         if (msg) alert(msg);
-        window.location.href = "index.html";
-    }
-
-    function logout() {
-        localStorage.removeItem("is_logged_in");
-        localStorage.removeItem("activated_code");
         window.location.href = "index.html";
     }
 
