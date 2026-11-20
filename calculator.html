@@ -127,6 +127,8 @@
 </div>
 
 <script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzMxBo2qe6zU7E_cnD_IQNh681UEfxb2N7IccU2EylGaqwsvjWuH4dpV7QNrsSLo5kH/exec";
+
     let isAr = true;
     let currentType = 'primary';
 
@@ -206,12 +208,52 @@
         document.getElementById('resAnnualYield').innerText = annualYield.toFixed(2);
     }
 
-    function logout() {
+    function forceLogout(msg) {
         localStorage.removeItem("is_logged_in");
+        localStorage.removeItem("activated_code");
+        if (msg) alert(msg);
         window.location.href = "index.html";
     }
 
-    window.onload = () => setMarket('primary');
+    function logout() {
+        localStorage.removeItem("is_logged_in");
+        localStorage.removeItem("activated_code");
+        window.location.href = "index.html";
+    }
+
+    async function verifyCodeStatus() {
+        const savedCode = (localStorage.getItem("activated_code") || "").trim();
+        const deviceId = localStorage.getItem("device_id") || "";
+
+        if (!savedCode) {
+            forceLogout();
+            return;
+        }
+
+        if (!navigator.onLine) return;
+
+        try {
+            const url = `${WEB_APP_URL}?action=check&code=${encodeURIComponent(savedCode)}&deviceId=${encodeURIComponent(deviceId)}`;
+            const response = await fetch(url, { method: "GET" });
+            if (!response.ok) return;
+
+            const data = await response.json();
+            const msg = (data && data.message) ? data.message.toString() : "";
+
+            // في Code.gs الكود السليم غير المستخدم بيرجع { ok: false, message: 'هذا الكود تم استخدامه من قبل' }
+            // لكن لو بقى "موقوف" أو غير موجود في الشيت بيرجع ok: false برسالة مختلفة عن "تم استخدامه من قبل"
+            if (data && data.ok === false && !msg.includes("تم استخدامه من قبل")) {
+                forceLogout(msg || "هذا الكود موقوف");
+            }
+        } catch (err) {
+            // لو النت فصل مؤقتاً وقت الفتح لا نطرد المستخدم فوراً
+        }
+    }
+
+    window.onload = () => {
+        setMarket('primary');
+        verifyCodeStatus();
+    };
 </script>
 </body>
 </html>
